@@ -6,6 +6,6 @@ size = (50, 50)
 # creating board
 board = Board(size)
 # screen size
-screenSize = (800, 700)
+screenSize = (1200, 1050)
 game = Game(board, screenSize)
 game.run()

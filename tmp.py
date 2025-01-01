@@ -1,31 +1,21 @@
-def integer_params_decorated(func):
-    def wrapper(self, *args, **kwargs):
-        for arg in args:
-            if not isinstance(arg, int):
-                raise TypeError("аргументы должны быть целыми числами")
-        for key, value in kwargs.items():
-            if not isinstance(value, int):
-                raise TypeError("аргументы должны быть целыми числами")
-        return func(self, *args, **kwargs)
-    return wrapper
+import requests
 
-def integer_params(cls):
-    methods = {k: v for k, v in cls.__dict__.items() if callable(v)}
-    for k, v in methods.items():
-        setattr(cls, k, integer_params_decorated(v))
-    return cls
+# Начальная ссылка на первый файл
+url = 'https://stepik.org/media/attachments/course67/3.6.3/699991.txt'
 
-@integer_params
-class Vector:
-    def __init__(self, *args):
-        self.__coords = list(args)
+while True:
+    # Скачиваем текущий файл
+    response = requests.get(url)
+    response.raise_for_status()  # Проверка на успешный ответ
 
-    def __getitem__(self, item):
-        return self.__coords[item]
+    # Получаем текст файла
+    text = response.text.strip()
 
-    def __setitem__(self, key, value):
-        self.__coords[key] = value
+    # Проверяем, начинается ли текст с "We"
+    if text.startswith('We'):
+        # Если да, выводим содержимое и завершаем цикл
+        print(text)
+        break
 
-    def set_coords(self, *coords, reverse=False):
-        c = list(coords)
-        self.__coords = c if not reverse else c[::-1]
+    # Иначе, извлекаем ссылку на следующий файл
+    url = 'https://stepik.org/media/attachments/course67/3.6.3/' + text
